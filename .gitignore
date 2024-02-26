@@ -11,3 +11,5 @@ data/storage.bson
 data/WiredTiger
 data/WiredTiger.lock
 data/WiredTiger.turtle
+.DS_Store
+data/diagnostic.data/metrics.2024-02-26T16-02-35Z-00000

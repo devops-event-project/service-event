@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from routes.event import event
 
-app = FastAPI()
+service_event = FastAPI()
 
-app.include_router(event)
+service_event.include_router(event)
