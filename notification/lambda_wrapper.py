@@ -17,6 +17,7 @@ class LambdaWrapper:
                         the response.
         :return: The response from the function invocation.
         """
+        print("invokeFunction")
         try:
             response = self.lambda_client.invoke(
                 FunctionName=function_name,
@@ -25,5 +26,6 @@ class LambdaWrapper:
             )
             print(f"Invoked function {function_name}")
         except:
+            print(f"Couldn't invoke function {function_name}.")
             return f"Couldn't invoke function {function_name}."
         return response
