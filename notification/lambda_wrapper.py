@@ -6,7 +6,7 @@ class LambdaWrapper:
         self.lambda_client = lambda_client
         self.iam_resource = iam_resource
 
-    def invoke_function(self, function_name, function_params, get_log=False):
+    def invoke_function(self, function_name, function_params, get_log=True):
         """
         Invokes a Lambda function.
 
@@ -17,7 +17,6 @@ class LambdaWrapper:
                         the response.
         :return: The response from the function invocation.
         """
-        print("invokeFunction")
         try:
             response = self.lambda_client.invoke(
                 FunctionName=function_name,

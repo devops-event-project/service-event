@@ -28,9 +28,7 @@ async def create_event(event: Event):
         'body': 'api test',
         'time': event_params['reminderTime']
     }
-    print("preSchedule")
     notification_service.schedule_email(email_params)
-    print("postSchedule")
     return serializeDict(conn.local.event.find_one({"_id":result.inserted_id}))
 
 @event.put('/{id}', tags=["Put Methods"])
