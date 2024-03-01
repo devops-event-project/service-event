@@ -3,8 +3,11 @@ from fastapi import APIRouter
 from config.db import conn
 from models.event import Event
 from schemas.event import serializeDict, serializeList
+from notification.notification import NotificationService
 
 event = APIRouter(prefix='/event')
+
+notification_service = NotificationService()
 
 @event.get('/', tags=["Get Methods"])
 async def find_all_events():
@@ -17,7 +20,15 @@ async def fine_one_event(id: str):
 @event.post('/')
 @event.post('/event/', tags=["Post Methods"])
 async def create_event(event: Event):
-    result = conn.local.event.insert_one(dict(event))
+    event_params = dict(event)
+    result = conn.local.event.insert_one(event_params)
+    email_params = {
+        'email': 'milankopp2@gmail.com',
+        'subject': 'api test',
+        'body': 'api test',
+        'time': event_params['reminderTime']
+    }
+    notification_service.schedule_email(email_params)
     return serializeDict(conn.local.event.find_one({"_id":result.inserted_id}))
 
 @event.put('/{id}', tags=["Put Methods"])

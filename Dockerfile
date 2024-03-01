@@ -1,4 +1,4 @@
-FROM python:3.11.7-alpine
+FROM python:3.9-alpine
 RUN mkdir -p /service-event
 WORKDIR /service-event
 

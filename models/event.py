@@ -9,3 +9,4 @@ class Event(BaseModel):
     location: str
     reminder_type: str
     reminder_time: int
+    reminderTime: str
