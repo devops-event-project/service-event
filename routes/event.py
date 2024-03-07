@@ -1,7 +1,9 @@
+import datetime
+
 from bson import ObjectId
 from fastapi import APIRouter
 from config.db import conn
-from models.event import Event
+from models.event import Event, Attendee, Reminder
 from schemas.event import serializeDict, serializeList
 from notification.notification import NotificationService
 
@@ -21,13 +23,31 @@ async def fine_one_event(id: str):
 @event.post('/event/', tags=["Post Methods"])
 async def create_event(event: Event):
     event_params = dict(event)
+
+    reminders_dict = list(map(dict, event_params['reminders']))
+    attendees_dict = list(map(dict, event_params['attendees']))
+
+    event_params['reminders'] = reminders_dict
+    event_params['attendees'] = attendees_dict
+
     result = conn.local.event.insert_one(event_params)
+
+    reminder_time = event_params['startDateTime']
+    time_change = datetime.timedelta(minutes=event_params['reminders'][0]['timeBefore'])
+    reminder_time = reminder_time - time_change
+    string_time = reminder_time.strftime('%Y-%m-%dT%H:%M:%S')
+
     email_params = {
-        'email': 'milankopp2@gmail.com',
-        'subject': 'api test',
-        'body': 'api test',
-        'time': event_params['reminderTime']
+        'email': 'milankopp2@gmail.com', #TODO: get user email address from cookies
+        'subject': 'Event Reminder',
+        'body': f'You have an event in {event_params["reminders"][0]["timeBefore"]} minutes. '
+                f'Title: {event_params["title"]}, '
+                f'Description: {event_params["description"]}, '
+                f'Location: {event_params["location"]}',
+        'time': string_time
     }
+
+
     notification_service.schedule_email(email_params)
     return serializeDict(conn.local.event.find_one({"_id":result.inserted_id}))
 
