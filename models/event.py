@@ -1,12 +1,23 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import List
+
+
+class Reminder(BaseModel):
+    type: str
+    timeBefore: int
+
+class Attendee(BaseModel):
+    userID: str
+    attending: str
+
 
 class Event(BaseModel):
+    userID: str
     title: str
     description: str
-    start: datetime
-    end: datetime
+    startDateTime: datetime
+    endDateTime: datetime
     location: str
-    reminder_type: str
-    reminder_time: int
-    reminderTime: str
+    reminders: List[Reminder]
+    attendees: List[Attendee]

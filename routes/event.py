@@ -1,3 +1,6 @@
+import datetime
+from datetime import datetime
+
 from bson import ObjectId
 from fastapi import APIRouter
 from config.db import conn
@@ -22,12 +25,22 @@ async def fine_one_event(id: str):
 async def create_event(event: Event):
     event_params = dict(event)
     result = conn.local.event.insert_one(event_params)
+
+    reminder_time = datetime.strptime(event_params['startDateTime'], '%Y-%m-$dT%H:%M:%SZ')
+    time_change = datetime.timedelta(minutes=event_params['reminders']['timeBefore'])
+    reminder_time = reminder_time + time_change
+    string_time = reminder_time.strftime('%Y-%m-$dT%H:%M:%S')
+
     email_params = {
-        'email': 'milankopp2@gmail.com',
-        'subject': 'api test',
-        'body': 'api test',
-        'time': event_params['reminderTime']
+        'email': 'milankopp2@gmail.com', #TODO: get user email address from cookies
+        'subject': 'Event Reminder',
+        'body': f'You have an event in {event_params["reminders"]["timeBefore"]} minutes. \n'
+                f'{event_params["title"]} \n'
+                f'{event_params["description"]} \n'
+                f'{event_params["location"]}',
+        'time': string_time
     }
+
     notification_service.schedule_email(email_params)
     return serializeDict(conn.local.event.find_one({"_id":result.inserted_id}))
 
