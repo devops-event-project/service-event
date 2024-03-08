@@ -6,6 +6,7 @@ from config.db import conn
 from models.event import Event, Attendee, Reminder
 from schemas.event import serializeDict, serializeList
 from notification.notification import NotificationService
+from event_store.event_store import KAFKA_TOPIC, publish_event, consume_events
 
 event = APIRouter(prefix='/event')
 
@@ -19,6 +20,12 @@ async def find_all_events():
 async def fine_one_event(id: str):
     return serializeDict(conn.local.event.find_one({"_id":ObjectId(id)}))
 
+@event.get("/consume-logs/")
+async def consume_logs(max_messages: int = 5):
+    messages = consume_events(max_messages=max_messages)
+    # decoded_messages = [message.decode('utf-8') for message in messages]
+    return {"messages": messages}
+
 @event.post('/')
 @event.post('/event/', tags=["Post Methods"])
 async def create_event(event: Event):
@@ -31,6 +38,8 @@ async def create_event(event: Event):
     event_params['attendees'] = attendees_dict
 
     result = conn.local.event.insert_one(event_params)
+    # publish events to event store
+    # publish_event("post",event_params)
 
     reminder_time = event_params['startDateTime']
     time_change = datetime.timedelta(minutes=event_params['reminders'][0]['timeBefore'])
@@ -47,7 +56,6 @@ async def create_event(event: Event):
         'time': string_time
     }
 
-
     notification_service.schedule_email(email_params)
     return serializeDict(conn.local.event.find_one({"_id":result.inserted_id}))
 
@@ -59,8 +67,12 @@ async def update_event(id: str, event: Event):
     )
     if update_result is None:
         return {"error": "Event not found"}
+    # publish events to event store
+    publish_event("put",dict(event))
     return serializeDict(conn.local.event.find_one({"_id": ObjectId(id)}))
 
 @event.delete('/{id}', tags=["Delete Methods"])
 async def delete_event(id: str):
+    # publish events to event store
+    publish_event("delete",{"id": id})
     return serializeDict(conn.local.event.find_one_and_delete({"_id":ObjectId(id)}))
