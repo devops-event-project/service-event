@@ -1,4 +1,4 @@
-version: '4.27.1'
+version: '3.8'
 services:
   service_event:
     container_name: service_event
