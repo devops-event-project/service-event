@@ -23,4 +23,4 @@ uvicorn==0.27.1
 virtualenv==20.25.0
 boto3>=1.29.1
 kafka-python==2.0.2
-jose==1.0.0
+python-jose==3.3.0
