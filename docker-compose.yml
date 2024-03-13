@@ -11,13 +11,17 @@ services:
     depends_on:
       - mongo
       - kafka
+    networks:
+      - shared_network
 
   mongo:
     image: mongo
     ports:
-      - "27018:27018"
+      - "27017:27017"
     volumes:
      - "/var/lib/mongodb-event:/data/db"
+    networks:
+      - shared_network
 
   kafka:
     image: wurstmeister/kafka
@@ -31,8 +35,16 @@ services:
       - zookeeper
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - shared_network
 
   zookeeper:
     image: wurstmeister/zookeeper
     ports:
       - "2181:2181"
+    networks:
+      - shared_network
+
+networks:
+  shared_network:
+    external: true
