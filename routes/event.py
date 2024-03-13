@@ -1,20 +1,22 @@
 import datetime
 
 from bson import ObjectId
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from config.db import conn
 from models.event import Event, Attendee, Reminder
 from schemas.event import serializeDict, serializeList
 from notification.notification import NotificationService
 from event_store.event_store import KAFKA_TOPIC, publish_event, consume_events
+from security.auth import get_current_user
 
 event = APIRouter(prefix='/event')
 
 notification_service = NotificationService()
 
 @event.get('/', tags=["Get Methods"])
-async def find_all_events():
-    return serializeList(conn.local.event.find())
+async def find_all_events(current_user: dict = Depends(get_current_user)):
+    username = current_user['username']
+    return serializeList(conn.local.event.find({"userID": username}))
 
 @event.get('/{id}', tags=["Get Methods"])
 async def fine_one_event(id: str):
