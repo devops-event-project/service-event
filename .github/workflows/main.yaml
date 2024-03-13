@@ -12,7 +12,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Create Docker Network
-      run: docker network create shared_network1
+      run: docker network create service-user_shared_network1
 
     - name: Build docker
       run: |
