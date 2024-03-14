@@ -4,7 +4,14 @@ from kafka import KafkaProducer, KafkaConsumer
 
 # Connecting to Database
 # conn = MongoClient("mongodb://localhost:27017")
-conn = MongoClient("mongodb://mongo:27017/local")
+db_host = os.getenv("DB_HOST", "localhost")
+db_port = os.getenv("DB_PORT", 27017)
+
+print(f"mongodb://{db_host}:{db_port}")
+
+client = MongoClient(f"mongodb://{db_host}:{db_port}")
+db = client['calendar_db']
+events = db['event']
 
 KAFKA_TOPIC = 'events'
 KAFKA_SERVER = 'kafka:9092'

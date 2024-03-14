@@ -2,7 +2,7 @@ import datetime
 
 from bson import ObjectId
 from fastapi import APIRouter, Depends
-from config.db import conn
+from config.db import events
 from models.event import Event, Attendee, Reminder
 from schemas.event import serializeDict, serializeList
 from notification.notification import NotificationService
@@ -16,11 +16,11 @@ notification_service = NotificationService()
 @event.get('/', tags=["Get Methods"])
 async def find_all_events(current_user: dict = Depends(get_current_user)):
     username = current_user['username']
-    return serializeList(conn.local.event.find({"userID": username}))
+    return serializeList(events.find({"userID": username}))
 
 @event.get('/{id}', tags=["Get Methods"])
 async def fine_one_event(id: str):
-    return serializeDict(conn.local.event.find_one({"_id":ObjectId(id)}))
+    return serializeDict(events.find_one({"_id":ObjectId(id)}))
 
 @event.get("/consume-logs/")
 async def consume_logs(max_messages: int = 5):
@@ -39,7 +39,7 @@ async def create_event(event: Event):
     event_params['reminders'] = reminders_dict
     event_params['attendees'] = attendees_dict
 
-    result = conn.local.event.insert_one(event_params)
+    result = events.insert_one(event_params)
     # publish events to event store
     # publish_event("post",event_params)
 
@@ -59,11 +59,11 @@ async def create_event(event: Event):
     }
 
     notification_service.schedule_email(email_params)
-    return serializeDict(conn.local.event.find_one({"_id":result.inserted_id}))
+    return serializeDict(events.find_one({"_id":result.inserted_id}))
 
 @event.put('/{id}', tags=["Put Methods"])
 async def update_event(id: str, event: Event):
-    update_result = conn.local.event.find_one_and_update(
+    update_result = events.find_one_and_update(
         {"_id": ObjectId(id)},
         {"$set": dict(event)}
     )
@@ -71,10 +71,10 @@ async def update_event(id: str, event: Event):
         return {"error": "Event not found"}
     # publish events to event store
     publish_event("put",dict(event))
-    return serializeDict(conn.local.event.find_one({"_id": ObjectId(id)}))
+    return serializeDict(events.find_one({"_id": ObjectId(id)}))
 
 @event.delete('/{id}', tags=["Delete Methods"])
 async def delete_event(id: str):
     # publish events to event store
     publish_event("delete",{"id": id})
-    return serializeDict(conn.local.event.find_one_and_delete({"_id":ObjectId(id)}))
+    return serializeDict(events.find_one_and_delete({"_id":ObjectId(id)}))
