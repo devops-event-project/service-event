@@ -6,7 +6,7 @@ from config.db import events
 from models.event import Event, Attendee, Reminder
 from schemas.event import serializeDict, serializeList
 from notification.notification import NotificationService
-from event_store.event_store import KAFKA_TOPIC, publish_event, consume_events
+# from event_store.event_store import KAFKA_TOPIC, publish_event, consume_events
 from security.auth import get_current_user
 
 event = APIRouter(prefix='/event')

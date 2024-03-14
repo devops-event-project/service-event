@@ -1,7 +1,7 @@
 import time
 import os
 from pymongo import MongoClient
-from kafka import KafkaProducer, KafkaConsumer
+# from kafka import KafkaProducer, KafkaConsumer
 
 # Connecting to Database
 # conn = MongoClient("mongodb://localhost:27017")
