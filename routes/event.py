@@ -78,11 +78,11 @@ async def update_event(id: str, event: Event):
     if update_result is None:
         return {"error": "Event not found"}
     # publish events to event store
-    publish_event("put",dict(event))
+    # publish_event("put",dict(event))
     return serializeDict(events.find_one({"_id": ObjectId(id)}))
 
 @event.delete('/{id}', tags=["Delete Methods"])
 async def delete_event(id: str):
     # publish events to event store
-    publish_event("delete",{"id": id})
+    # publish_event("delete",{"id": id})
     return serializeDict(events.find_one_and_delete({"_id":ObjectId(id)}))
