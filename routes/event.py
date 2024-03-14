@@ -39,7 +39,7 @@ async def create_event(event: Event):
     event_params['reminders'] = reminders_dict
     event_params['attendees'] = attendees_dict
 
-    result = events.insert_one(event_params)
+    # result = events.insert_one(event_params)
     # publish events to event store
     # publish_event("post",event_params)
 
