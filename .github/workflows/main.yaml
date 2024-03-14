@@ -1,5 +1,6 @@
 name: Build Test and push
-on: [push]
+on:
+  workflow_dispatch:
 env:
   IMAGE_NAME: service_event
   REPO_NAME: anandanlk
@@ -11,32 +12,48 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Create Docker Network
-      run: docker network create service-user_shared_network1
-
-    - name: Build docker
-      run: |
-        docker build . -t $REPO_NAME/$IMAGE_NAME
+#    - name: Build docker
+#      run: |
+#        docker build . -t $REPO_NAME/$IMAGE_NAME
 
 #    - name: run docker
 #      run: |
 #        docker run -d -e 8080:8080 -host=172.17.0.2 $REPO_NAME/$IMAGE_NAME:latest && \
 #          docker ps && sleep 5
-    - name: run docker-compose
-      run: |
-        docker-compose up -d && docker ps && sleep 30
+#    - name: run docker-compose
+#      run: |
+#        docker-compose up -d && docker ps && sleep 30
+#
+#    - name: Run API Tests
+#      id: run-newman
+#      uses: anthonyvscode/newman-action@v1
+#      with:
+#        collection: postman/event_collection.json
+#        reporters: cli
+#        iterationCount: 1
+#
+#    - name: Output summary to console
+#      run: echo ${{ steps.run-newman.outputs.summary }}
 
-    - name: Run API Tests
-      id: run-newman
-      uses: anthonyvscode/newman-action@v1
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
       with:
-        collection: postman/event_collection.json
-        reporters: cli
-        iterationCount: 1
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-central-1
 
-    - name: Output summary to console
-      run: echo ${{ steps.run-newman.outputs.summary }}
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
 
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: calendar
+        IMAGE_TAG: service_event
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
     # - name: Login to Container Registry
     #   uses: docker/login-action@v1
     #   with:
