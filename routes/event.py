@@ -28,7 +28,6 @@ async def consume_logs(max_messages: int = 5):
     # decoded_messages = [message.decode('utf-8') for message in messages]
     return {"messages": messages}
 
-@event.post('/')
 @event.post('/create', tags=["Post Methods"])
 async def create_event(event: Event):
     event_params = dict(event)
