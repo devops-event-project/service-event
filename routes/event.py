@@ -29,7 +29,7 @@ async def consume_logs(max_messages: int = 5):
     return {"messages": messages}
 
 @event.post('/')
-@event.post('/event/', tags=["Post Methods"])
+@event.post('/create', tags=["Post Methods"])
 async def create_event(event: Event):
     event_params = dict(event)
 
@@ -39,7 +39,6 @@ async def create_event(event: Event):
     event_params['reminders'] = reminders_dict
     event_params['attendees'] = attendees_dict
 
-    # result = events.insert_one(event_params)
     # publish events to event store
     # publish_event("post",event_params)
 
@@ -57,6 +56,7 @@ async def create_event(event: Event):
     for attendee in all_attendees:
         event_params["userID"] = attendee["userID"]
         result = events.insert_one(event_params)
+        del event_params['_id']
         email_params = {
             'email': attendee["userID"],
             'subject': 'Event Reminder',
@@ -66,7 +66,7 @@ async def create_event(event: Event):
                     f'Location: {event_params["location"]}',
             'time': string_time
         }
-        notification_service.schedule_email(email_params)
+        # notification_service.schedule_email(email_params)
 
     return serializeDict(events.find_one({"_id":result.inserted_id}))
 
