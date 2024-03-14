@@ -65,7 +65,7 @@ async def create_event(event: Event):
                     f'Location: {event_params["location"]}',
             'time': string_time
         }
-        # notification_service.schedule_email(email_params)
+        notification_service.schedule_email(email_params)
 
     return serializeDict(events.find_one({"_id":result.inserted_id}))
 
