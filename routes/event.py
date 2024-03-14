@@ -48,17 +48,26 @@ async def create_event(event: Event):
     reminder_time = reminder_time - time_change
     string_time = reminder_time.strftime('%Y-%m-%dT%H:%M:%S')
 
-    email_params = {
-        'email': 'milankopp2@gmail.com', #TODO: get user email address from cookies
-        'subject': 'Event Reminder',
-        'body': f'You have an event in {event_params["reminders"][0]["timeBefore"]} minutes. '
-                f'Title: {event_params["title"]}, '
-                f'Description: {event_params["description"]}, '
-                f'Location: {event_params["location"]}',
-        'time': string_time
-    }
+    # Code to create event for all attendees
+    all_attendees = attendees_dict
+    print(all_attendees)
+    all_attendees.append({"userID": event_params["userID"], "attending": "True"})
+    print(all_attendees)
 
-    notification_service.schedule_email(email_params)
+    for attendee in all_attendees:
+        event_params["userID"] = attendee["userID"]
+        result = events.insert_one(event_params)
+        email_params = {
+            'email': attendee["userID"],
+            'subject': 'Event Reminder',
+            'body': f'You have an event in {event_params["reminders"][0]["timeBefore"]} minutes. '
+                    f'Title: {event_params["title"]}, '
+                    f'Description: {event_params["description"]}, '
+                    f'Location: {event_params["location"]}',
+            'time': string_time
+        }
+        notification_service.schedule_email(email_params)
+
     return serializeDict(events.find_one({"_id":result.inserted_id}))
 
 @event.put('/{id}', tags=["Put Methods"])
