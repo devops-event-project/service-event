@@ -47,4 +47,4 @@ services:
 
 networks:
   service-user_shared_network1:
-    external: true
+    # external: true
