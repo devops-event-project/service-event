@@ -12,7 +12,7 @@ services:
       - mongo
       - kafka
     networks:
-      - service-user_shared_network1
+      - service_event_network
 
   mongo:
     image: mongo
@@ -21,7 +21,7 @@ services:
     volumes:
      - "/var/lib/mongodb-event:/data/db"
     networks:
-      - service-user_shared_network1
+      - service_event_network
 
   kafka:
     image: wurstmeister/kafka
@@ -36,14 +36,14 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - service-user_shared_network1
+      - service_event_network
 
   zookeeper:
     image: wurstmeister/zookeeper
     ports:
       - "2181:2181"
     networks:
-      - service-user_shared_network1
+      - service_event_network
 
 networks:
   service-user_shared_network1:
