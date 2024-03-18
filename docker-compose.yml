@@ -3,9 +3,9 @@ services:
   service_event:
     container_name: service_event
     build: .
-    environment:
-      - "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
-      - "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+    # environment:
+    #   - "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
+    #   - "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
     ports:
       - "8081:8081"
     depends_on:
