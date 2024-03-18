@@ -46,5 +46,5 @@ services:
       - service_event_network
 
 networks:
-  service-user_shared_network1:
+  service_event_network:
     external: true
