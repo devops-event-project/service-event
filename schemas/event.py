@@ -1,7 +1,16 @@
 from datetime import datetime
 
+"""
+Provides serialization functions to facilitate the data exchange between the 
+API service and MongoDB. It includes two functions: serializeDict, which 
+converts MongoDB documents to dictionaries with appropriate type handling for 
+object IDs and datetime objects.
+serializeList, which applies this serialization to a list of documents.
+"""
+
+
 # Serialize data betweeen API Service and MongoDB
-# Serialize Dictionary
+# Serialize MongoDB documents
 def serializeDict(item) -> dict:
     return {
         # Converting _id to string
@@ -15,6 +24,6 @@ def serializeDict(item) -> dict:
         for i in item
     }
 
-# Serialize list of Dictionaries
+# Serialize list of documents
 def serializeList(items) -> list:
 	return [serializeDict(item) for item in items]

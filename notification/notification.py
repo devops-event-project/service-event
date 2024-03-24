@@ -6,6 +6,12 @@ from lambda_wrapper import LambdaWrapper
 
 import boto3
 
+"""
+This module sets up a notification service by initializing an AWS Lambda client
+with necessary credentials and invoking specific Lambda functions for email
+sending and event scheduling, using a custom LambdaWrapper.
+"""
+
 
 class NotificationService:
 

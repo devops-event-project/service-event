@@ -2,6 +2,11 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import List
 
+"""
+Defines data models for managing events, including reminders and attendees
+"""
+
+
 # Creating Models for Reminder
 class Reminder(BaseModel):
     type: str

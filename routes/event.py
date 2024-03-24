@@ -11,6 +11,16 @@ from notification.notification import NotificationService
 from event_store.event_store import KAFKA_TOPIC, publish_event, consume_events
 from security.auth import get_current_user
 
+"""
+This module integrates FastAPI with MongoDB, Kafka, and AWS for event management,
+including creating, updating, and deleting events.
+The API routes offer functionalities:
+listing all events for a user,
+finding a specific event,
+publishing and consuming event to event store,
+managing event reminders and attendee notifications via scheduled emails.
+"""
+
 # Creating APIRouter
 event = APIRouter(prefix='/event')
 

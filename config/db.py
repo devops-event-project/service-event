@@ -3,6 +3,15 @@ import os
 from pymongo import MongoClient
 from kafka import KafkaProducer, KafkaConsumer
 
+"""
+This script sets up connections for MongoDB and Kafka.
+
+For Kafka, it defines a topic and server, using a function to create a Kafka
+producer. It initializes both a Kafka producer and consumer linked to
+the specified topic and server
+"""
+
+
 # Connecting to Database
 db_host = os.getenv("DB_HOST", "mongo")
 db_port = os.getenv("DB_PORT", 27017)

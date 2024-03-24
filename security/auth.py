@@ -4,6 +4,14 @@ from starlette import status
 from jose import jwt, JWTError
 from datetime import timedelta, datetime
 
+"""
+Implements JWT token verification for FastAPI using the PyJWT library. It 
+defines a secret key and algorithm for decoding JWT tokens. The 
+get_current_user function acts as an async dependency to extract the token 
+from the request, decode it to verify the user's identity, and handle any 
+errors or invalid tokens by raising HTTP 401 Unauthorized exceptions.
+"""
+
 # Defining the secret key and algorithm used for JWT encoding and decoding
 SECRET_KEY = 'zd%t00xw9-&h1#shs$aqguplrc=$x@3jlh1_kwtd7u8z!@i$ym'
 ALGORITHM = 'HS256'
