@@ -3,16 +3,16 @@ services:
   service_event:
     container_name: service_event
     build: .
-    # environment:
-    #   - "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
-    #   - "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+    environment:
+      - "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
+      - "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
     ports:
       - "8081:8081"
     depends_on:
       - mongo
       - kafka
-    networks:
-      - service_event_network
+    # networks:
+    #   - service_event_network
 
   mongo:
     image: mongo
@@ -20,8 +20,8 @@ services:
       - "27017:27017"
     volumes:
      - "/var/lib/mongodb-event:/data/db"
-    networks:
-      - service_event_network
+    # networks:
+    #   - service_event_network
 
   kafka:
     image: wurstmeister/kafka
@@ -35,16 +35,16 @@ services:
       - zookeeper
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - service_event_network
+    # networks:
+    #   - service_event_network
 
   zookeeper:
     image: wurstmeister/zookeeper
     ports:
       - "2181:2181"
-    networks:
-      - service_event_network
+#     networks:
+#       - service_event_network
 
-networks:
-  service_event_network:
-    external: true
+# networks:
+#   service_event_network:
+#     external: true
